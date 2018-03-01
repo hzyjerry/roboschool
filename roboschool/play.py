@@ -23,7 +23,7 @@ def display_arr(screen, arr, video_size, transpose):
     pyg_img = pygame.transform.scale(pyg_img, video_size)
     screen.blit(pyg_img, (0,0))
 
-def play(env, transpose=True, fps=30, zoom=None, callback=None, keys_to_action=None):
+def play(env, transpose=True, fps=30, zoom=None, callback=None, keys_to_action=None, , save_video=True):
     """Allows one to play the game using keyboard.
 
     To simply play the game use:

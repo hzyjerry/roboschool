@@ -3,12 +3,14 @@ import pygame
 import sys
 import time
 import matplotlib
+import scipy.misc
+import os
+import numpy as np
 try:
     matplotlib.use('GTK3Agg')
     import matplotlib.pyplot as plt
 except Exception:
     pass
-
 
 import pyglet.window as pw
 
@@ -17,6 +19,9 @@ from pygame.locals import HWSURFACE, DOUBLEBUF, RESIZABLE, VIDEORESIZE
 from threading import Thread
 from roboschool.RoboschoolReacher_v0_2017may import SmallReactivePolicy
 
+
+
+
 def display_arr(screen, arr, video_size, transpose):
     arr_min, arr_max = arr.min(), arr.max()
     arr = 255.0 * (arr - arr_min) / (arr_max - arr_min)
@@ -24,7 +29,7 @@ def display_arr(screen, arr, video_size, transpose):
     pyg_img = pygame.transform.scale(pyg_img, video_size)
     screen.blit(pyg_img, (0,0))
 
-def play(env, transpose=True, fps=30, zoom=None, callback=None, keys_to_action=None):
+def play(env, transpose=True, fps=30, zoom=None, callback=None, keys_to_action=None, save_video=False, demo_root=""):
     """Allows one to play the game using keyboard.
 
     To simply play the game use:
@@ -80,6 +85,17 @@ def play(env, transpose=True, fps=30, zoom=None, callback=None, keys_to_action=N
             }
         If None, default key_to_action mapping for that env is used, if provided.
     """
+
+    ## Saving the video
+    curr_demo = len(os.listdir(demo_root))
+    curr_save_path = ""
+    curr_frame = 0
+    curr_actions = []
+    curr_states  = []
+    all_actions = []
+    save_video = save_video    
+
+
     pi = SmallReactivePolicy(env.observation_space, env.action_space)
 
     obs_s = env.metadata['video']
@@ -114,9 +130,35 @@ def play(env, transpose=True, fps=30, zoom=None, callback=None, keys_to_action=N
 
     while running:
         if env_done:
+            print("========== Current episode {} =========".format(str(curr_demo)))
+            if curr_demo >= 492:
+                print("Action collection finished")
+                sys.exit()
             env_done = False
             obs, info = env.reset()
+            if save_video:
+                if len(curr_actions) > 0:
+                    np.savez(os.path.join(curr_save_path, "demo.npz"), curr_actions)
+                    with open(os.path.join(curr_save_path, "demo.txt"), "w") as f:
+                        for action in curr_actions:
+                            f.write("{} {}\n".format(action[0], action[1]))
+                    np.savez(os.path.join(curr_save_path, "states.npz"), curr_actions)
+                    with open(os.path.join(curr_save_path, "states.txt"), "w") as f:
+                        for state in curr_states:
+                            for value in state:
+                                f.write("{} ".format(value))
+                            f.write("\n")
+                    all_actions.append(curr_actions)
+                    np.savez(os.path.join(demo_root, "all_actions.npz"), all_actions)
+                curr_save_path = os.path.join(demo_root, "demo_" + str(curr_demo))
+                os.mkdir(curr_save_path)
+                curr_frame = 0
+                curr_actions = []
+                curr_states  = []
+                curr_demo += 1
+
             motor_state = info['motor']
+            aux_state = info['aux']
         else:
             #print(tuple(sorted(pressed_keys)))
             #action = keys_to_action[tuple(sorted(pressed_keys))]
@@ -125,6 +167,10 @@ def play(env, transpose=True, fps=30, zoom=None, callback=None, keys_to_action=N
             prev_obs = obs
             obs, rew, env_done, info = env.step(action)
             motor_state = info['motor']
+            aux_state = info['aux']
+            if save_video:
+                curr_actions.append(action)
+                curr_states .append(motor_state)
             if callback is not None:
                 callback(prev_obs, obs, action, rew, env_done, info)
         if obs is not None:
@@ -133,7 +179,9 @@ def play(env, transpose=True, fps=30, zoom=None, callback=None, keys_to_action=N
             if obs.shape[2] == 1:
                 obs = obs.repeat(3, axis=2)
             display_arr(screen, obs, transpose=transpose, video_size=video_size)
-
+            if save_video:
+                scipy.misc.imsave(os.path.join(curr_save_path, '%s.jpg' % curr_frame), obs)
+                curr_frame += 1
         # process pygame events
         
         for event in pygame.event.get():

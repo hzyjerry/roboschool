@@ -1,6 +1,73 @@
 from gym.envs.registration import register
 #from gym.scoreboard.registration import add_task, add_group
 
+
+register(
+    id='RoboschoolReacher-v1',
+    entry_point='roboschool:RoboschoolReacher',
+    max_episode_steps=150,
+    reward_threshold=18.0,
+    tags={ "pg_complexity": 1*1000000 },
+    )
+
+register(
+    id='RoboschoolReacherRGB-v1',
+    entry_point='roboschool:RoboschoolReacherRGB',
+    max_episode_steps=150,
+    reward_threshold=18.0,
+    tags={ "pg_complexity": 1*1000000 },
+    )
+
+register(
+    id='RoboschoolReacherRGB_inf-v1',
+    entry_point='roboschool:RoboschoolReacherRGB_infinite',
+    max_episode_steps=60,
+    reward_threshold=18.0,
+    tags={ "pg_complexity": 1*1000000 },
+    )
+
+register(
+    id='RoboschoolReacherRGB_green-v1',
+    entry_point='roboschool:RoboschoolReacherRGB_green',
+    max_episode_steps=150,
+    reward_threshold=18.0,
+    tags={ "pg_complexity": 1*1000000 },
+    )
+
+register(
+    id='RoboschoolReacherRGB_red-v1',
+    entry_point='roboschool:RoboschoolReacherRGB_red',
+    max_episode_steps=150,
+    reward_threshold=18.0,
+    tags={ "pg_complexity": 1*1000000 },
+    )
+
+
+register(
+    id='RoboschoolReacherPlay-v1',
+    entry_point='roboschool:RoboschoolReacherPlay',
+    max_episode_steps=150,
+    reward_threshold=18.0,
+    tags={ "pg_complexity": 1*1000000 },
+    )
+
+register(
+    id='RoboschoolReacherLine-v1',
+    entry_point='roboschool:RoboschoolReacherLine',
+    max_episode_steps=150,
+    reward_threshold=18.0,
+    tags={ "pg_complexity": 1*1000000 },
+    )
+
+
+
+
+
+
+
+
+
+
 register(
     id='RoboschoolInvertedPendulum-v1',
     entry_point='roboschool:RoboschoolInvertedPendulum',
@@ -20,38 +87,6 @@ register(
     entry_point='roboschool:RoboschoolInvertedDoublePendulum',
     max_episode_steps=1000,
     reward_threshold=9100.0,
-    tags={ "pg_complexity": 1*1000000 },
-    )
-
-register(
-    id='RoboschoolReacher-v1',
-    entry_point='roboschool:RoboschoolReacher',
-    max_episode_steps=150,
-    reward_threshold=18.0,
-    tags={ "pg_complexity": 1*1000000 },
-    )
-
-register(
-    id='RoboschoolReacherRGB-v1',
-    entry_point='roboschool:RoboschoolReacherRGB',
-    max_episode_steps=150,
-    reward_threshold=18.0,
-    tags={ "pg_complexity": 1*1000000 },
-    )
-
-register(
-    id='RoboschoolReacherPlay-v1',
-    entry_point='roboschool:RoboschoolReacherPlay',
-    max_episode_steps=150,
-    reward_threshold=18.0,
-    tags={ "pg_complexity": 1*1000000 },
-    )
-
-register(
-    id='RoboschoolReacherLine-v1',
-    entry_point='roboschool:RoboschoolReacherLine',
-    max_episode_steps=150,
-    reward_threshold=18.0,
     tags={ "pg_complexity": 1*1000000 },
     )
 
@@ -130,7 +165,7 @@ from roboschool.gym_pendulums import RoboschoolInvertedPendulum
 from roboschool.gym_pendulums import RoboschoolInvertedPendulumSwingup
 from roboschool.gym_pendulums import RoboschoolInvertedDoublePendulum
 from roboschool.gym_reacher import RoboschoolReacher
-from roboschool.gym_reacher_rgb import RoboschoolReacherRGB
+from roboschool.gym_reacher_rgb import RoboschoolReacherRGB, RoboschoolReacherRGB_red, RoboschoolReacherRGB_green, RoboschoolReacherRGB_infinite
 from roboschool.gym_reacher_play import RoboschoolReacherPlay
 from roboschool.gym_reacher_line import RoboschoolReacherLine
 from roboschool.gym_mujoco_walkers import RoboschoolHopper
